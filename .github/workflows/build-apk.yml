@@ -31,7 +31,10 @@ jobs:
       - name: Android SDK
         run: |
           SDKM=$(ls "$ANDROID_SDK_ROOT"/cmdline-tools/*/bin/sdkmanager | head -1); yes | "$SDKM" --licenses > /dev/null || true
-          "$SDKM" "platforms;android-37" "build-tools;36.0.0"
+          # имя пакета API 37 в sdkmanager может быть android-37 или android-37.0, ищем сами
+          P=$("$SDKM" --list 2>/dev/null | grep -oE 'platforms;android-37[.0-9]*' | sort -u | head -1 || true)
+          echo "Platform: ${P:-не найден, AGP докачает сам}"
+          "$SDKM" ${P:+"$P"} "build-tools;36.0.0"
 
       - name: TDLib из Releases
         env:
