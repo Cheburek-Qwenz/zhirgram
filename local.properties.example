@@ -1,0 +1,10 @@
+# Скопируй в local.properties (он в .gitignore). В репозиторий эти значения не попадают никогда.
+# api_id и api_hash: https://my.telegram.org
+TG_APP_ID=0
+TG_APP_HASH=
+
+# Подпись (необязательно; без неё release подпишется debug-ключом)
+#STORE_FILE=/путь/к/release.jks
+#STORE_PASSWORD=
+#KEY_ALIAS=
+#KEY_PASSWORD=

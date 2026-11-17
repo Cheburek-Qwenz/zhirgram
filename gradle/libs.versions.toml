@@ -1,0 +1,36 @@
+# ВЕРСИИ НЕ ПРОВЕРЕНЫ СБОРКОЙ. Первый прогон CI может потребовать правок.
+# material3: по странице релизов на 17.11.2026 последняя 1.5.0-rc01 (4 ноя 2026).
+# Если вышла 1.5.0 stable, поставь её. Expressive API публичные именно в линии 1.5.x
+# (в 1.4.0 большая часть internal).
+[versions]
+agp = "8.13.0"
+kotlin = "2.2.20"
+composeBom = "2025.10.01"
+material3 = "1.5.0-rc01"
+activityCompose = "1.11.0"
+lifecycle = "2.9.4"
+coroutines = "1.10.2"
+datastore = "1.1.7"
+coreKtx = "1.17.0"
+
+[libraries]
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-foundation = { module = "androidx.compose.foundation:foundation" }
+compose-animation = { module = "androidx.compose.animation:animation" }
+# версия material3 задаётся явно, BOM указывает на stable
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

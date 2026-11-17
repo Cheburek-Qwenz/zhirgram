@@ -1,0 +1,79 @@
+name: Build TDLib
+
+# Запускать вручную (Actions -> Build TDLib -> Run workflow), один раз и потом при обновлении TDLib.
+# Результат: Release "tdlib-latest" с tdlib-android.zip (Client.java, TdApi.java, libtdjni.so arm64).
+# build-apk.yml скачивает этот архив перед сборкой приложения.
+#
+# НЕ ПРОВЕРЕНО ЗАПУСКОМ. Скрипты и аргументы взяты из tdlib/td example/android/README.md:
+#   ./build-openssl.sh  (4-й параметр версия OpenSSL, по умолчанию 1.1.1; 5-й непустой = shared)
+#   ./build-tdlib.sh    (1 SDK root, 2 версия NDK, 3 путь к OpenSSL, 4 "c++_shared", 5 "JSON"/"JSONJava")
+#   результат: tdlib/libs, tdlib/java, tdlib/tdlib.zip
+# Точные значения первых трёх аргументов build-openssl.sh сверь с самим скриптом в клоне.
+on:
+  workflow_dispatch:
+    inputs:
+      td_ref:
+        description: 'Коммит или тег tdlib/td (лучше зафиксировать конкретный коммит)'
+        default: 'master'
+
+permissions:
+  contents: write
+
+jobs:
+  tdlib:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      NDK_VERSION: '27.2.12479018'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Пакеты для сборки (php и gperf нужны для генерации TdApi.java)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gperf php-cli perl cmake make g++ unzip zip
+
+      - name: Android SDK и NDK
+        run: |
+          yes | sdkmanager --licenses > /dev/null || true
+          sdkmanager "platforms;android-34" "cmake;3.22.1" "ndk;${NDK_VERSION}"
+
+      - name: Клонируем TDLib
+        run: |
+          git clone https://github.com/tdlib/td.git
+          git -C td checkout "${{ inputs.td_ref }}"
+          git -C td rev-parse HEAD | tee td-commit.txt
+
+      - name: Проверка окружения, OpenSSL, TDLib
+        working-directory: td/example/android
+        run: |
+          OPENSSL_DIR="$PWD/third-party/openssl"
+          ./check-environment.sh
+          ./build-openssl.sh "$ANDROID_SDK_ROOT" "$NDK_VERSION" "$OPENSSL_DIR"
+          ./build-tdlib.sh "$ANDROID_SDK_ROOT" "$NDK_VERSION" "$OPENSSL_DIR"
+
+      - name: Собираем архив (java + arm64 .so)
+        run: |
+          OUT=td/example/android/tdlib
+          mkdir -p pack/java/org/drinkless/tdlib pack/jniLibs/arm64-v8a
+          find "$OUT" -path '*org/drinkless/tdlib/*.java' -exec cp {} pack/java/org/drinkless/tdlib/ \;
+          SO=$(find "$OUT" -path '*arm64-v8a/libtdjni.so' | head -1)
+          test -n "$SO" || { echo "libtdjni.so для arm64-v8a не найден"; find "$OUT" | head -50; exit 1; }
+          cp "$SO" pack/jniLibs/arm64-v8a/
+          test -f pack/java/org/drinkless/tdlib/TdApi.java || { echo "TdApi.java не найден"; exit 1; }
+          cp td-commit.txt pack/
+          (cd pack && zip -r ../tdlib-android.zip .)
+
+      - name: Release tdlib-latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete tdlib-latest --yes --cleanup-tag || true
+          gh release create tdlib-latest tdlib-android.zip \
+            --title "TDLib $(cut -c1-9 td-commit.txt)" \
+            --notes "TDLib commit $(cat td-commit.txt), arm64-v8a"

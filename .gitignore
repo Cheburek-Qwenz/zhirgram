@@ -1,0 +1,14 @@
+*.iml
+.gradle/
+build/
+local.properties
+*.jks
+*.keystore
+.idea/
+.DS_Store
+captures/
+.cxx/
+
+# Генерируется workflow build-tdlib.yml, в git не кладём
+app/src/main/java/org/drinkless/
+app/src/main/jniLibs/
