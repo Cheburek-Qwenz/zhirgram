@@ -23,15 +23,15 @@ jobs:
           java-version: '21'
 
       # В репозитории нет gradlew (wrapper-jar бинарный), поэтому ставим Gradle сами.
-      # Версия под AGP 8.13. Если добавишь gradlew, убери gradle-version и вызывай ./gradlew.
+      # Версия под AGP 9.5 (минимум Gradle 9.6.0). Если добавишь gradlew, убери gradle-version и вызывай ./gradlew.
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.14.3'
+          gradle-version: '9.6.0'
 
       - name: Android SDK
         run: |
           SDKM=$(ls "$ANDROID_SDK_ROOT"/cmdline-tools/*/bin/sdkmanager | head -1); yes | "$SDKM" --licenses > /dev/null || true
-          "$SDKM" "platforms;android-36" "build-tools;36.0.0"
+          "$SDKM" "platforms;android-37" "build-tools;36.0.0"
 
       - name: TDLib из Releases
         env:

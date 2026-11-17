@@ -1,9 +1,7 @@
 import java.util.Properties
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -17,7 +15,7 @@ fun secret(name: String): String =
 
 android {
     namespace = "com.qwenz.zhirgram"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.qwenz.zhirgram"
@@ -71,9 +69,7 @@ android {
     }
 }
 
-kotlin {
-    compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
-}
+// jvmTarget берётся из compileOptions (AGP 9 со встроенным Kotlin)
 
 dependencies {
     implementation(platform(libs.compose.bom))

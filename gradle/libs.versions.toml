@@ -1,11 +1,13 @@
-# ВЕРСИИ НЕ ПРОВЕРЕНЫ СБОРКОЙ. Первый прогон CI может потребовать правок.
+# Версии сверены с документацией 17.11.2026: AGP 9.5.1 (нужен Gradle 9.6.0, API до 37),
+# Kotlin 2.4.21, BOM 2026.09.00. material3 1.5.0 тянет Compose 1.12: нужны AGP 9.1+ и compileSdk 37.
+# В AGP 9 Kotlin встроен, плагин kotlin-android не нужен (остаётся только kotlin-compose).
 # material3: по странице релизов на 17.11.2026 последняя 1.5.0-rc01 (4 ноя 2026).
 # Если вышла 1.5.0 stable, поставь её. Expressive API публичные именно в линии 1.5.x
 # (в 1.4.0 большая часть internal).
 [versions]
-agp = "8.13.0"
-kotlin = "2.2.20"
-composeBom = "2025.10.01"
+agp = "9.5.1"
+kotlin = "2.4.21"
+composeBom = "2026.09.00"
 material3 = "1.5.0-rc01"
 activityCompose = "1.11.0"
 lifecycle = "2.9.4"
@@ -32,5 +34,4 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
