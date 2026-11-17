@@ -14,8 +14,6 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleButton
-import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -42,20 +40,22 @@ fun SettingsScreen(
     ) {
         Text("Стиль интерфейса", style = MaterialTheme.typography.titleMedium)
 
-        // ToggleButton: у выбранной кнопки форма меняется сама (ToggleButtonDefaults.shapes()).
+        // Стоит замена ToggleButton: ToggleButtonDefaults.shapes() не нашлась в material3 1.5.0-rc01.
+        // Выбранный вариант закрашен, невыбранный тональный; формы по нажатию даёт ZhirButton.
+        // TODO: вернуть настоящий ToggleButton / ToggleButtonGroup, сверив имя API по KDoc версии.
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-            ToggleButton(
-                checked = settings.style == UiStyle.EXPRESSIVE,
-                onCheckedChange = { if (it) onStyle(UiStyle.EXPRESSIVE) },
-                shapes = ToggleButtonDefaults.shapes(),
+            ZhirButton(
+                text = "Expressive",
+                onClick = { onStyle(UiStyle.EXPRESSIVE) },
+                tonal = settings.style != UiStyle.EXPRESSIVE,
                 modifier = Modifier.weight(1f),
-            ) { Text("Expressive") }
-            ToggleButton(
-                checked = settings.style == UiStyle.MATERIAL3,
-                onCheckedChange = { if (it) onStyle(UiStyle.MATERIAL3) },
-                shapes = ToggleButtonDefaults.shapes(),
+            )
+            ZhirButton(
+                text = "Material 3",
+                onClick = { onStyle(UiStyle.MATERIAL3) },
+                tonal = settings.style != UiStyle.MATERIAL3,
                 modifier = Modifier.weight(1f),
-            ) { Text("Material 3") }
+            )
         }
         Text(
             when (settings.style) {
